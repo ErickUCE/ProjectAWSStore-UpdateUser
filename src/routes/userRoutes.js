@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const User = require('../models/user');
+const authenticateToken = require('../middlewares/authMiddleware.js'); // ✅ Middleware para verificar token
 
 const router = express.Router();
 router.use(bodyParser.json()); // ✅ Se aplica bodyParser solo una vez
@@ -67,5 +68,36 @@ router.post('/sync-delete', async (req, res) => {
         res.status(500).send({ error: 'Failed to sync provider delete' });
     }
 });
+
+// ✅ Endpoint para actualizar la información del usuario autenticado
+router.put('/me', authenticateToken, async (req, res) => {
+    try {
+        const { first_name, last_name, identification_number, email, phone_number } = req.body;
+
+        // 🔍 Obtener el usuario autenticado desde el token
+        const user = await User.findByPk(req.user.id);
+        if (!user) {
+            return res.status(404).json({ error: 'Usuario no encontrado' });
+        }
+
+        // ✅ Actualizar los campos permitidos
+        user.first_name = first_name || user.first_name;
+        user.last_name = last_name || user.last_name;
+        user.identification_number = identification_number || user.identification_number;
+        user.email = email || user.email;
+        user.phone_number = phone_number || user.phone_number;
+
+        await user.save();
+
+        console.log(`✅ Usuario con ID ${user.id} actualizado correctamente`);
+        res.json({ message: 'Usuario actualizado correctamente', user });
+
+    } catch (error) {
+        console.error('❌ Error actualizando usuario:', error.message);
+        res.status(500).json({ error: 'Error en el servidor' });
+    }
+});
+
+
 
 module.exports = router;
