@@ -22,9 +22,9 @@ const resolvers = {
 
                 // Notificar a los otros microservicios
                 const instances = [
-                    'http://3.208.235.135:5005/sync-update', // Microservicio de Crear
-                    'http://52.54.203.131:5001/sync-update',  // Microservicio de Eliminar
-                    'http://3.224.31.24:5006/sync-update'  // ✅ Microservicio de Leer
+                    'http://3.209.163.151:5005/sync-update', // Microservicio de Crear
+                    'http://3.231.45.95:5001/sync-update',  // Microservicio de Eliminar
+                    'http://3.213.150.0:5006/sync-update'  // ✅ Microservicio de Leer
                 ];
 
                 for (const instance of instances) {
